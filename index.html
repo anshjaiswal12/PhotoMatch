@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhotoMatch</title>
+    <style>
+        body {
+            font-family: "Courier New", Courier, monospace;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #000;
+            color: #fff;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 36px;
+            margin: 0;
+            letter-spacing: 2px;
+        }
+        .header p {
+            color: #888;
+            margin: 10px 0 0 0;
+        }
+        .comparison-container {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+        .photo-container {
+            flex: 0 0 auto;
+            text-align: center;
+            position: relative;
+        }
+        .photo {
+            width: 400px;
+            height: 400px;
+            object-fit: cover;
+            cursor: pointer;
+            border: 2px solid #333;
+            transition: all 0.3s ease;
+        }
+        .photo:hover {
+            border-color: #fff;
+            transform: scale(1.02);
+        }
+        .stats {
+            text-align: center;
+            margin: 30px 0;
+            color: #888;
+            font-size: 14px;
+        }
+        .leaderboard {
+            margin-top: 60px;
+            border-top: 1px solid #333;
+            padding-top: 20px;
+            margin-bottom: 60px;
+        }
+        .leaderboard h2 {
+            text-align: center;
+            color: #888;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        #leaderboardList {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            text-align: center;
+        }
+        #leaderboardList p {
+            margin: 5px 0;
+            color: #888;
+            font-size: 14px;
+        }
+        .versus {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        .rating-badge {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #000;
+            border-top: 1px solid #333;
+        }
+        .footer p {
+            color: #888;
+            margin: 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>PHOTOMATCH</h1>
+        <p>WHO'S HOTTER? CLICK TO CHOOSE.</p>
+    </div>
+
+    <div class="comparison-container">
+        <div class="photo-container">
+            <img src="" alt="Photo 1" class="photo" id="photo1" onclick="vote(0)">
+            <div class="rating-badge">Rating: <span id="rating1">1500</span></div>
+        </div>
+        <div class="photo-container">
+            <img src="" alt="Photo 2" class="photo" id="photo2" onclick="vote(1)">
+            <div class="rating-badge">Rating: <span id="rating2">1500</span></div>
+        </div>
+    </div>
+
+    <div class="stats">
+        <p>TOTAL COMPARISONS: <span id="totalVotes">0</span></p>
+    </div>
+
+    <div class="leaderboard">
+        <h2>RANKINGS</h2>
+        <div id="leaderboardList"></div>
+    </div>
+
+    <div class="footer">
+        <p>Arth Jaiswal Production</p>
+    </div>
+
+    <script>
+        // Add array of local image paths
+        const localImages = [
+            { id: 1, url: 'images/photo1.jpg', rating: 1500 },
+            { id: 2, url: 'images/photo2.jpg', rating: 1500 },
+            { id: 3, url: 'images/photo3.jpg', rating: 1500 },
+            { id: 4, url: 'images/photo4.jpg', rating: 1500 }
+        ];
+
+        let currentPair = [];
+        let totalVotes = 0;
+
+        // Replace API call with local image selection
+        function getRandomPair() {
+            const shuffled = [...localImages].sort(() => Math.random() - 0.5);
+            return shuffled.slice(0, 2);
+        }
+
+        // Simplified update display without API call
+        function updateDisplay() {
+            currentPair = getRandomPair();
+            document.getElementById('photo1').src = currentPair[0].url;
+            document.getElementById('photo2').src = currentPair[1].url;
+            document.getElementById('rating1').textContent = currentPair[0].rating;
+            document.getElementById('rating2').textContent = currentPair[1].rating;
+            updateLeaderboard();
+        }
+
+        // Simplified voting function without API call
+        function vote(winnerIndex) {
+            const winner = currentPair[winnerIndex];
+            const loser = currentPair[1 - winnerIndex];
+            
+            // Simple ELO rating update
+            const K = 32;
+            const expectedScoreWinner = 1 / (1 + Math.pow(10, (loser.rating - winner.rating) / 400));
+            const ratingChange = Math.round(K * (1 - expectedScoreWinner));
+            
+            winner.rating += ratingChange;
+            loser.rating -= ratingChange;
+
+            totalVotes++;
+            document.getElementById('totalVotes').textContent = totalVotes;
+            updateDisplay();
+        }
+
+        // Simplified leaderboard without API call
+        function updateLeaderboard() {
+            const sortedPhotos = [...localImages].sort((a, b) => b.rating - a.rating);
+            const leaderboardHTML = sortedPhotos.map((photo, index) => 
+                `<p>#${index + 1}: ${photo.url.split('/').pop()} (Rating: ${photo.rating})</p>`
+            ).join('');
+            document.getElementById('leaderboardList').innerHTML = leaderboardHTML;
+        }
+
+        // Initialize the display
+        updateDisplay();
+    </script>
+</body>
+</html>
