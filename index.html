@@ -15,12 +15,12 @@
         }
         .header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
             border-bottom: 1px solid #333;
             padding-bottom: 20px;
         }
         .header h1 {
-            font-size: 36px;
+            font-size: clamp(24px, 5vw, 36px);
             margin: 0;
             letter-spacing: 2px;
         }
@@ -30,18 +30,22 @@
         }
         .comparison-container {
             display: flex;
+            flex-direction: row;
             justify-content: center;
-            gap: 40px;
+            gap: 20px;
             margin-bottom: 30px;
+            flex-wrap: wrap;
         }
         .photo-container {
-            flex: 0 0 auto;
+            flex: 1 1 300px;
+            max-width: 400px;
             text-align: center;
             position: relative;
         }
         .photo {
-            width: 400px;
-            height: 400px;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 1/1;
             object-fit: cover;
             cursor: pointer;
             border: 2px solid #333;
@@ -58,27 +62,37 @@
             font-size: 14px;
         }
         .leaderboard {
-            margin-top: 60px;
+            margin-top: 40px;
             border-top: 1px solid #333;
             padding-top: 20px;
-            margin-bottom: 60px;
+            margin-bottom: 80px;
         }
         .leaderboard h2 {
             text-align: center;
             color: #888;
-            font-size: 18px;
-            margin-bottom: 20px;
+            font-size: 24px;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
         }
         #leaderboardList {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 20px;
-            text-align: center;
+            padding: 0 20px;
         }
         #leaderboardList p {
-            margin: 5px 0;
+            margin: 10px 0;
             color: #888;
-            font-size: 14px;
+            font-size: 16px;
+            padding: 15px;
+            background-color: #111;
+            border-radius: 8px;
+            border: 1px solid #333;
+            transition: all 0.3s ease;
+        }
+        #leaderboardList p:hover {
+            background-color: #222;
+            transform: translateY(-2px);
         }
         .versus {
             position: absolute;
@@ -113,6 +127,61 @@
             color: #888;
             margin: 0;
             font-size: 14px;
+        }
+        /* Add responsive styles */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .comparison-container {
+                gap: 10px;
+            }
+            .photo-container {
+                flex: 1 1 250px;
+            }
+            .leaderboard h2 {
+                font-size: 20px;
+            }
+            #leaderboardList {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 15px;
+                padding: 0 10px;
+            }
+            #leaderboardList p {
+                font-size: 14px;
+                padding: 12px;
+            }
+            .footer {
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header p {
+                font-size: 12px;
+            }
+            .photo-container {
+                flex: 1 1 200px;
+            }
+            .rating-badge {
+                font-size: 10px;
+                bottom: -20px;
+            }
+            .stats {
+                font-size: 12px;
+            }
+            .leaderboard {
+                margin-bottom: 100px;
+            }
+            #leaderboardList {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            #leaderboardList p {
+                text-align: left;
+                padding: 15px;
+                margin: 5px 0;
+            }
         }
     </style>
 </head>
